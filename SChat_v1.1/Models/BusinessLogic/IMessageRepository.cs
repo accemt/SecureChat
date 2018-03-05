@@ -11,7 +11,7 @@ namespace SChat.Models.BusinessLogic
     interface IMessageRepository
     {
         OperationResult<Message> Add(Message NewMessage);
-        OperationResult<Message> GetById(Chat ChatId, int MessageID);
-        IEnumerable<Message> GetAll(int ChatId, int LastCount = 15);
+        OperationResult<Message> GetById(int ChatId, int MessageID);
+        OperationResult<IEnumerable<Message>> GetAll(int ChatId, int LastCount = 15);
     }
 }

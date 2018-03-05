@@ -22,7 +22,7 @@ namespace SChat.Controllers
         }
 
         [HttpGet]
-        public HttpResponseMessage GetMessage(Chat ChatID, int MessageID) {
+        public HttpResponseMessage GetMessage(int ChatID, int MessageID) {
             var MessageInstance = messageRepository.GetById(ChatID, MessageID).context;
             HttpResponseMessage response;
 
@@ -36,13 +36,13 @@ namespace SChat.Controllers
 
         [HttpGet]
         public HttpResponseMessage GetMessages(int ChatID) {
-            var MessagesList = messageRepository.GetAll(ChatID);
+            var OpResult = messageRepository.GetAll(ChatID);
             HttpResponseMessage response;
 
-            if (MessagesList != null)
+            if (OpResult.result)
             {
-                response = Request.CreateResponse<IEnumerable<Message>>(System.Net.HttpStatusCode.OK, MessagesList);
-                Debug.WriteLine("Message: " + MessagesList.First<Message>().MessageText);
+                response = Request.CreateResponse<IEnumerable<Message>>(System.Net.HttpStatusCode.OK, OpResult.context);
+                Debug.WriteLine("Message: " + OpResult.context.First<Message>().Author.Name);
             }
             else
                 response = Request.CreateResponse<OperationResult<Message>>(System.Net.HttpStatusCode.NoContent, new OperationResult<Message>(false, "No messages is taken."));

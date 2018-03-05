@@ -39,8 +39,8 @@ namespace SChat.Models.BusinessLogic
             return new OperationResult<Message>(true, "Success");
         }
 
-        public OperationResult<Message> GetById(Chat ChatID, int MessageID) {
-            Message MessageInstance = db.Messages.Where<Message>(x => x.ReceiverChat == ChatID).FirstOrDefault<Message>();
+        public OperationResult<Message> GetById(int ChatID, int MessageID) {
+            Message MessageInstance = db.Messages.Where<Message>(x => x.ReceiverChat.Id == ChatID).FirstOrDefault<Message>();
             if (MessageInstance == null)
                 return new OperationResult<Message>(false, "Chat isn't found.");
 
@@ -48,15 +48,11 @@ namespace SChat.Models.BusinessLogic
             return new OperationResult<Message>(true, "Success", MessageInstance);
         }
 
-        public IEnumerable<Message> GetAll(int ChatID, int LastCount = 15) {
+        public OperationResult<IEnumerable<Message>> GetAll(int ChatID, int LastCount = 15) {
             IEnumerable<Message> MessageList = db.Messages.Include("Author").Include("ReceiverChat").Where<Message>(x => x.ReceiverChat.Id == ChatID);
-            //db.Entry(MessageList.FirstOrDefault<Message>()).Reference("Author");
-            /*foreach (var m in MessageList)
-                db.Entry(m).Reference("Author").Load();
-                */
-            if (MessageList == null)
-                return null;
-            return MessageList;
+            if (MessageList.FirstOrDefault<Message>() == null)
+                return new OperationResult<IEnumerable<Message>>(false, "No properly messages is found.", MessageList); ;
+            return new OperationResult<IEnumerable<Message>>(true, "Success", MessageList);
 
             /*
             if (MessageList.ContainsKey(ChatID)) {
