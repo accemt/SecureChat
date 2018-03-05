@@ -23,26 +23,29 @@ namespace SChat.Controllers
 
         [HttpGet]
         public HttpResponseMessage GetMessage(Chat ChatID, int MessageID) {
-            var MessageInstance = messageRepository.GetById(ChatID, MessageID);
+            var MessageInstance = messageRepository.GetById(ChatID, MessageID).context;
             HttpResponseMessage response;
 
             if (MessageInstance != null)
                 response = Request.CreateResponse<Message>(System.Net.HttpStatusCode.OK, MessageInstance);
             else
-                response = Request.CreateResponse<OperationResult>(System.Net.HttpStatusCode.NoContent, new OperationResult(false, "No messages is taken."));
+                response = Request.CreateResponse<OperationResult<Message>>(System.Net.HttpStatusCode.NoContent, new OperationResult<Message>(false, "No messages is taken."));
 
             return response;
         }
 
         [HttpGet]
-        public HttpResponseMessage GetMessages(Chat ChatID) {
+        public HttpResponseMessage GetMessages(int ChatID) {
             var MessagesList = messageRepository.GetAll(ChatID);
             HttpResponseMessage response;
 
             if (MessagesList != null)
+            {
                 response = Request.CreateResponse<IEnumerable<Message>>(System.Net.HttpStatusCode.OK, MessagesList);
+                Debug.WriteLine("Message: " + MessagesList.First<Message>().MessageText);
+            }
             else
-                response = Request.CreateResponse<OperationResult>(System.Net.HttpStatusCode.NoContent, new OperationResult(false, "No messages is taken."));
+                response = Request.CreateResponse<OperationResult<Message>>(System.Net.HttpStatusCode.NoContent, new OperationResult<Message>(false, "No messages is taken."));
 
             return response;
         }
@@ -53,7 +56,7 @@ namespace SChat.Controllers
             /*db.Books.Add(book);
             db.SaveChanges();*/
             messageRepository.Add(message);
-            return Request.CreateResponse<OperationResult>(System.Net.HttpStatusCode.Created, new OperationResult(true, "Mesage is sent successfully."));
+            return Request.CreateResponse<OperationResult<Message>>(System.Net.HttpStatusCode.Created, new OperationResult<Message>(true, "Mesage is sent successfully."));
         }
 
         /*

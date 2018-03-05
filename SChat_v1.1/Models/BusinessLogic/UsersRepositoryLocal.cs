@@ -49,9 +49,9 @@ namespace SChat.Models.BusinessLogic
             return UserList;
         }
 
-        public OperationResult Add(User NewUser) {
+        public OperationResult<User> Add(User NewUser) {
             UserList.Add(NewUser);
-            return new OperationResult(true, null);
+            return new OperationResult<User>(true, null);
         }
 
         public User GetById(int UserID) {

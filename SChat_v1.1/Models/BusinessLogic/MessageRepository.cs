@@ -1,6 +1,8 @@
 ﻿using SChat.Models.BusinessLogic;
 using SChat.Models.CacheRepository;
 using SChat.Models.Domain;
+using SChat.Models.Domain.ContentTypes;
+using SChat.Models.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,37 +14,51 @@ namespace SChat.Models.BusinessLogic
 {
     public class MessageRepository : IMessageRepository
     {
-        private static Dictionary<Chat, List<Message>> MessageList = new Dictionary<Chat, List<Message>>();
+        private SChatDBContext db;
 
         public MessageRepository()
         {
+            db = new SChatDBContext();
             Debug.WriteLine("!!!");
-            if (MessageList.Count() == 0) {
-                //var MesList = new List<Message>();
-                GlobalCache.getIstance().Add("id", 777, DateTime.Now.AddSeconds(10));
+        }
 
-                var chat = new Chat { Id = 0, Name = "Chat 1" };
-                MessageList.Add(chat, new List<Message>());
-                MessageList[chat].Add(new Message { Id = 1, Author = new User { }, MessageText = "TestBody 1" });
-                MessageList[chat].Add(new Message { Id = 2, Author = new User { }, MessageText = "TestBody 2" });
-                MessageList[chat].Add(new Message { Id = 3, Author = new User { }, MessageText = "TestBody 3" });
+        public OperationResult<Message> Add(Message NewMessage) {
+            try
+            {
+                db.Messages.Add(NewMessage);
+                db.SaveChanges();
             }
+            catch (MessageException e)
+            {
+                return new OperationResult<Message>(false, "Message exception exception: " + e.Description);
+            }
+            catch (Exception e)
+            {
+                return new OperationResult<Message>(false, "System exception: " + e.ToString());
+            }
+            return new OperationResult<Message>(true, "Success");
         }
 
-        public void Add(Message NewMessage) {
-            if (!MessageList.ContainsKey(NewMessage.ReceiverChat))
-                MessageList.Add(NewMessage.ReceiverChat, new List<Message>());
-            MessageList[NewMessage.ReceiverChat].Add(NewMessage);
+        public OperationResult<Message> GetById(Chat ChatID, int MessageID) {
+            Message MessageInstance = db.Messages.Where<Message>(x => x.ReceiverChat == ChatID).FirstOrDefault<Message>();
+            if (MessageInstance == null)
+                return new OperationResult<Message>(false, "Chat isn't found.");
+
+            MessageInstance = db.Messages.Find(MessageID);
+            return new OperationResult<Message>(true, "Success", MessageInstance);
         }
 
-        public Message GetById(Chat ChatID, int MessageID) {
-            if (MessageList.ContainsKey(ChatID))
-                return MessageList[ChatID].Find(x => x.Id == MessageID);
-            else
+        public IEnumerable<Message> GetAll(int ChatID, int LastCount = 15) {
+            IEnumerable<Message> MessageList = db.Messages.Include("Author").Include("ReceiverChat").Where<Message>(x => x.ReceiverChat.Id == ChatID);
+            //db.Entry(MessageList.FirstOrDefault<Message>()).Reference("Author");
+            /*foreach (var m in MessageList)
+                db.Entry(m).Reference("Author").Load();
+                */
+            if (MessageList == null)
                 return null;
-        }
+            return MessageList;
 
-        public IEnumerable<Message> GetAll(Chat ChatID) {
+            /*
             if (MessageList.ContainsKey(ChatID)) {
                 if (GlobalCache.getIstance().Contains("id"))
                     MessageList[ChatID].First<Message>().Id = Convert.ToInt32(GlobalCache.getIstance().Get("id"));
@@ -51,7 +67,7 @@ namespace SChat.Models.BusinessLogic
                 return MessageList[ChatID];
             }
             else
-                return null;
+                return null;*/
         }
     }
 }

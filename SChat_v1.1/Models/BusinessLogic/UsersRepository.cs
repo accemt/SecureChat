@@ -15,9 +15,10 @@ namespace SChat.Models.BusinessLogic
 {
     public class UserRepository : IUserRepository
     {
-        private SChatDBContext db = new SChatDBContext();
+        private SChatDBContext db;
 
         public UserRepository() {
+            db = new SChatDBContext();
         }
 
         public AuthResponse Authorize(AuthRequest AReq)
@@ -83,16 +84,16 @@ namespace SChat.Models.BusinessLogic
             return db.Users.ToList<User>();
         }
 
-        public OperationResult Add(User NewUser) {
+        public OperationResult<User> Add(User NewUser) {
             try {
                 db.Users.Add(NewUser);
                 db.SaveChanges();
             } catch (UserManagementException e) {
-                return new OperationResult(false, "UserManagement exception: " + e.Description);
+                return new OperationResult<User>(false, "UserManagement exception: " + e.Description);
             } catch (Exception e) {
-                return new OperationResult(false, "System exception: " + e.ToString());
+                return new OperationResult<User>(false, "System exception: " + e.ToString());
             }
-            return new OperationResult(true, "Success");
+            return new OperationResult<User>(true, "Success");
         }
 
     }

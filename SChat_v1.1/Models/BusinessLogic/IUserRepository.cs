@@ -13,7 +13,7 @@ namespace SChat.Models.BusinessLogic
         AuthResponse Authorize(AuthRequest AReq);
         User getUser(int UserID);
         IEnumerable<User> getUsers();
-        OperationResult Add(User NewUser);
+        OperationResult<User> Add(User NewUser);
 
     }
 }
