@@ -52,11 +52,11 @@ namespace SChat.Controllers
 
         [HttpPost]
         public HttpResponseMessage SendMessage([FromBody]Message message) {
-            //return book;
-            /*db.Books.Add(book);
-            db.SaveChanges();*/
-            messageRepository.Add(message);
-            return Request.CreateResponse<OperationResult<Message>>(System.Net.HttpStatusCode.Created, new OperationResult<Message>(true, "Mesage is sent successfully."));
+            var OpResult = messageRepository.Add(message);
+            if (OpResult.result)
+                return Request.CreateResponse<OperationResult<Message>>(System.Net.HttpStatusCode.Created, OpResult);
+            else
+                return Request.CreateResponse<OperationResult<Message>>(System.Net.HttpStatusCode.BadRequest, OpResult);
         }
 
         /*

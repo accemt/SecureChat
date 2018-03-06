@@ -11,7 +11,9 @@ namespace SChat.Models.Domain
     {
         [Key]
         public long Id { get; set; }
+        [Required]
         public User Author { get; set; }
+        [Required]
         public Chat ReceiverChat { get; set; }
         //public ReceiverType ReceiverType { get; set; }
         public Nullable<DateTime> Time { get; set; }

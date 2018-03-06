@@ -274,3 +274,4 @@ C:\Users\Accemt\Documents\Visual Studio 2015\Projects\SChat\SChat_v1.1\obj\Debug
 C:\Users\Accemt\Documents\Visual Studio 2015\Projects\SChat\SChat_v1.1\obj\Debug\SChat.Migrations.Migration_v16T5.resources
 C:\Users\Accemt\Documents\Visual Studio 2015\Projects\SChat\SChat_v1.1\obj\Debug\SChat.Migrations.Migration_v16T6.resources
 C:\Users\Accemt\Documents\Visual Studio 2015\Projects\SChat\SChat_v1.1\obj\Debug\SChat.Migrations.Migration_v16T7.resources
+C:\Users\Accemt\Documents\Visual Studio 2015\Projects\SChat\SChat_v1.1\obj\Debug\SChat.Migrations._17.resources
